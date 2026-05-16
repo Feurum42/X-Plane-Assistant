@@ -1,7 +1,6 @@
 import { app, BrowserWindow, ipcMain, session, dialog, shell, globalShortcut, protocol } from 'electron';
 import chokidar from 'chokidar';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import fs from 'fs-extra';
 import https from 'https';
 import { spawn, exec } from 'child_process';
@@ -102,7 +101,7 @@ function registerScreenshotHotkey(windowRef, xplanePath) {
   }
 }
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// In CommonJS, __dirname and __filename are already defined.
 process.env.DIST = path.join(__dirname, '../dist');
 process.env.VITE_PUBLIC = app.isPackaged ? process.env.DIST : path.join(process.env.DIST, '../public');
 

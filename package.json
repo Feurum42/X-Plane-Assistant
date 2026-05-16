@@ -5,7 +5,6 @@
   "description": "Smart Mod Manager and Assistant for X-Plane 12",
   "author": "Feurum42",
   "main": "dist-electron/main.js",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build && electron-builder",
