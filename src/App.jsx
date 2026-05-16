@@ -488,8 +488,19 @@ function App() {
     if (window.electronAPI) {
       setIsScanning(true);
       try {
-        const mods = await window.electronAPI.getMods(path);
-        setInstalledMods(mods);
+        const result = await window.electronAPI.getMods(path);
+        if (Array.isArray(result)) {
+          setInstalledMods(result);
+        } else if (result && result.error) {
+          console.error("Scan error:", result.error);
+          setInstalledMods([]);
+          setErrorMsg("Failed to scan mods: " + result.error);
+        } else {
+          setInstalledMods([]);
+        }
+      } catch (err) {
+        console.error("Critical scan error:", err);
+        setInstalledMods([]);
       } finally {
         setIsScanning(false);
       }

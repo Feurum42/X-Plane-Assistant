@@ -327,33 +327,34 @@ ipcMain.handle('select-directory', async (event) => {
 
 // Example handler to list mods in ModVault vs installed
 ipcMain.handle('get-mods', async (event, xplanePath) => {
-  const vaultPath = path.join(xplanePath, 'ModVault');
-  const cachePath = path.join(app.getPath('userData'), 'mod-cache.json');
-  await fs.ensureDir(vaultPath);
-
-  let sizeCache = {};
   try {
-    if (await fs.pathExists(cachePath)) {
-      sizeCache = await fs.readJson(cachePath);
-    }
-  } catch (e) {}
+    const vaultPath = path.join(xplanePath, 'ModVault');
+    const cachePath = path.join(app.getPath('userData'), 'mod-cache.json');
+    await fs.ensureDir(vaultPath);
 
-  const getSmartSize = async (dirPath) => {
+    let sizeCache = {};
     try {
-      const stats = await fs.lstat(dirPath);
-      const mtime = stats.mtimeMs;
-      if (sizeCache[dirPath] && sizeCache[dirPath].mtime === mtime) {
-        return sizeCache[dirPath].size;
+      if (await fs.pathExists(cachePath)) {
+        sizeCache = await fs.readJson(cachePath);
       }
-      const sizeBytes = stats.isDirectory() ? await getDirSize(dirPath) : stats.size;
-      const formattedSize = formatSize(sizeBytes);
-      sizeCache[dirPath] = { mtime, size: formattedSize };
-      return formattedSize;
-    } catch (e) { return 'Unknown'; }
-  };
+    } catch (e) {}
 
-  const mods = [];
-  const managedIds = new Set();
+    const getSmartSize = async (dirPath) => {
+      try {
+        const stats = await fs.lstat(dirPath);
+        const mtime = stats.mtimeMs;
+        if (sizeCache[dirPath] && sizeCache[dirPath].mtime === mtime) {
+          return sizeCache[dirPath].size;
+        }
+        const sizeBytes = stats.isDirectory() ? await getDirSize(dirPath) : stats.size;
+        const formattedSize = formatSize(sizeBytes);
+        sizeCache[dirPath] = { mtime, size: formattedSize };
+        return formattedSize;
+      } catch (e) { return 'Unknown'; }
+    };
+
+    const mods = [];
+    const managedIds = new Set();
 
   // 1. Scan ModVault
   const vaultContents = await fs.readdir(vaultPath);
@@ -545,12 +546,16 @@ ipcMain.handle('get-mods', async (event, xplanePath) => {
     uniqueMods.push(mod);
   }
 
-  // Save cache for next time
-  try {
-    await fs.writeJson(cachePath, sizeCache);
-  } catch (e) {}
+    // Save cache for next time
+    try {
+      await fs.writeJson(cachePath, sizeCache);
+    } catch (e) {}
 
-  return uniqueMods;
+    return uniqueMods;
+  } catch (err) {
+    console.error('CRITICAL ERROR during get-mods:', err);
+    return { error: err.message, stack: err.stack };
+  }
 });
 
 ipcMain.handle('toggle-mod', async (event, { vaultPath, xplanePath, modId, modType, enable, isManaged }) => {
@@ -594,15 +599,16 @@ ipcMain.handle('toggle-mod', async (event, { vaultPath, xplanePath, modId, modTy
 
 ipcMain.handle('get-changelog', async () => {
   try {
-    const changelogPath = app.isPackaged 
-      ? path.join(process.resourcesPath, 'CHANGELOG.md')
-      : path.join(__dirname, '../CHANGELOG.md');
+    const rootPath = app.isPackaged ? process.resourcesPath : app.getAppPath();
+    const changelogPath = path.join(rootPath, 'CHANGELOG.md');
     
+    console.log('Loading changelog from:', changelogPath);
     if (await fs.pathExists(changelogPath)) {
       return await fs.readFile(changelogPath, 'utf8');
     }
-    return "Changelog not found.";
+    return `Changelog not found at ${changelogPath}`;
   } catch (err) {
+    console.error('Changelog error:', err);
     return "Error loading changelog: " + err.message;
   }
 });
