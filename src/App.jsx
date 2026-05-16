@@ -2446,6 +2446,109 @@ function App() {
             </div>
           </div>
         )}
+      {updateInfo && (
+        <div className="animate-in" style={{
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          width: '320px',
+          background: 'var(--panel-bg)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid var(--accent)',
+          borderRadius: '12px',
+          padding: '20px',
+          boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '15px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '1.5rem' }}>🚀</span>
+            <div>
+              <div style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>New Version Available!</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Version {updateInfo.version} is ready.</div>
+            </div>
+          </div>
+
+          {!updateDownloaded ? (
+            <>
+              {updateProgress > 0 ? (
+                <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
+                  <div style={{ width: `${updateProgress}%`, height: '100%', background: 'var(--accent)', transition: 'width 0.3s' }} />
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button className="btn btn-secondary" style={{ flex: 1, fontSize: '0.8rem' }} onClick={() => setUpdateInfo(null)}>Later</button>
+                  <button className="btn btn-primary" style={{ flex: 1, fontSize: '0.8rem' }} onClick={() => window.electronAPI.downloadUpdate()}>Update Now</button>
+                </div>
+              )}
+            </>
+          ) : (
+            <button className="btn btn-primary" style={{ width: '100%', background: 'var(--success)' }} onClick={() => window.electronAPI.installUpdate()}>
+              Restart & Install
+            </button>
+          )}
+        </div>
+      )}
+      {showChangelog && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.8)',
+          backdropFilter: 'blur(10px)',
+          zIndex: 10000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px'
+        }}>
+          <div className="glass-panel animate-in" style={{
+            width: '100%',
+            maxWidth: '600px',
+            maxHeight: '80vh',
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '30px',
+            position: 'relative'
+          }}>
+            <button 
+              onClick={() => setShowChangelog(false)}
+              style={{
+                position: 'absolute', top: '15px', right: '15px',
+                background: 'transparent', border: 'none',
+                color: 'var(--text-secondary)', fontSize: '1.2rem', cursor: 'pointer'
+              }}
+            >
+              ✕
+            </button>
+            
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: 0, color: 'var(--accent)' }}>
+              <span>✨</span> What's New
+            </h2>
+            
+            <div style={{
+              flex: 1,
+              overflowY: 'auto',
+              padding: '10px 0',
+              fontSize: '0.95rem',
+              lineHeight: '1.6',
+              whiteSpace: 'pre-wrap',
+              color: 'var(--text-secondary)'
+            }}>
+              {changelogContent}
+            </div>
+
+            <button 
+              className="btn btn-primary" 
+              style={{ marginTop: '25px', alignSelf: 'center', minWidth: '150px' }}
+              onClick={() => setShowChangelog(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );
@@ -2859,114 +2962,46 @@ function InstalledModCard({ instMod, catalog, xplanePath, onToggle, onDelete, in
           🗑️
         </button>
       </div>
-      {updateInfo && (
-        <div className="animate-in" style={{
-          position: 'fixed',
-          bottom: '20px',
-          right: '20px',
-          width: '320px',
-          background: 'var(--panel-bg)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid var(--accent)',
-          borderRadius: '12px',
-          padding: '20px',
-          boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
-          zIndex: 9999,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '15px'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '1.5rem' }}>🚀</span>
-            <div>
-              <div style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>New Version Available!</div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Version {updateInfo.version} is ready.</div>
-            </div>
-          </div>
 
-          {!updateDownloaded ? (
-            <>
-              {updateProgress > 0 ? (
-                <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
-                  <div style={{ width: `${updateProgress}%`, height: '100%', background: 'var(--accent)', transition: 'width 0.3s' }} />
-                </div>
-              ) : (
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button className="btn btn-secondary" style={{ flex: 1, fontSize: '0.8rem' }} onClick={() => setUpdateInfo(null)}>Later</button>
-                  <button className="btn btn-primary" style={{ flex: 1, fontSize: '0.8rem' }} onClick={() => window.electronAPI.downloadUpdate()}>Update Now</button>
-                </div>
-              )}
-            </>
-          ) : (
-            <button className="btn btn-primary" style={{ width: '100%', background: 'var(--success)' }} onClick={() => window.electronAPI.installUpdate()}>
-              Restart & Install
-            </button>
-          )}
-        </div>
-      )}
-      {showChangelog && (
-        <div style={{
-          position: 'fixed',
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.8)',
-          backdropFilter: 'blur(10px)',
-          zIndex: 10000,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '20px'
-        }}>
-          <div className="glass-panel animate-in" style={{
-            width: '100%',
-            maxWidth: '600px',
-            maxHeight: '80vh',
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '30px',
-            position: 'relative'
-          }}>
-            <button 
-              onClick={() => setShowChangelog(false)}
-              style={{
-                position: 'absolute',
-                top: '20px',
-                right: '20px',
-                background: 'none',
-                border: 'none',
-                color: 'var(--text-secondary)',
-                fontSize: '1.5rem',
-                cursor: 'pointer'
-              }}
-            >✕</button>
-            
-            <h2 style={{ margin: '0 0 20px 0', display: 'flex', alignItems: 'center', gap: '15px' }}>
-              <span>📜</span> Release History
-            </h2>
-            
-            <div style={{ 
-              flex: 1, 
-              overflowY: 'auto', 
-              paddingRight: '10px',
-              fontSize: '0.95rem',
-              lineHeight: '1.6',
-              whiteSpace: 'pre-wrap',
-              color: 'var(--text-secondary)'
-            }}>
-              {changelogContent}
-            </div>
-
-            <button 
-              className="btn btn-primary" 
-              style={{ marginTop: '25px', alignSelf: 'center', minWidth: '150px' }}
-              onClick={() => setShowChangelog(false)}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null, errorInfo: null };
+  }
 
-export default App;
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
+    this.setState({ errorInfo });
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '40px', color: 'white', background: '#990000', height: '100vh', overflow: 'auto', fontFamily: 'monospace' }}>
+          <h1>CRITICAL RENDER ERROR</h1>
+          <h3>{this.state.error && this.state.error.toString()}</h3>
+          <details style={{ whiteSpace: 'pre-wrap', background: 'rgba(0,0,0,0.5)', padding: '20px', marginTop: '20px' }}>
+            <summary style={{ cursor: 'pointer', marginBottom: '10px' }}>View Component Stack</summary>
+            {this.state.errorInfo && this.state.errorInfo.componentStack}
+          </details>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+export default function AppWithErrorBoundary() {
+  return (
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
+  );
+}
