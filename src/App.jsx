@@ -933,7 +933,7 @@ function App() {
             opacity: 0.5,
             letterSpacing: '1px'
           }}>
-            VERSION 1.0.3
+            VERSION 1.0.4
           </div>
         </div>
       </div>

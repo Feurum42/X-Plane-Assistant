@@ -27,4 +27,5 @@ jobs:
       - name: Build and Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ELECTRON_BUILDER_ALLOW_HTTP_CACHE: false
         run: npm run build -- --publish always

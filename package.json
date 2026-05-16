@@ -1,7 +1,9 @@
 {
   "name": "xplane-assistant",
   "private": true,
-  "version": "1.0.3",
+  "version": "1.0.4",
+  "description": "Smart Mod Manager and Assistant for X-Plane 12",
+  "author": "Feurum42",
   "main": "dist-electron/main.js",
   "type": "module",
   "scripts": {
@@ -28,8 +30,7 @@
         "nsis",
         "portable"
       ],
-      "icon": "public/icon.png",
-      "artifactName": "${productName}-Setup-${version}.${ext}"
+      "icon": "public/icon.png"
     },
     "nsis": {
       "oneClick": false,
@@ -37,6 +38,9 @@
       "createDesktopShortcut": true,
       "shortcutName": "X-Plane Assistant",
       "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "${productName}-Portable-${version}.${ext}"
     },
     "publish": {
       "provider": "github",
