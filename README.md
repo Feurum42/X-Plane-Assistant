@@ -2,6 +2,8 @@
 
 **X-Plane Assistant** is a modern, high-performance desktop application designed to streamline your X-Plane 12 experience. It acts as a powerful companion for virtual pilots, managing everything from add-on installations to real-time community event tracking.
 
+[**📥 Download Latest Release**](https://github.com/Feurum42/X-Plane-Assistant/releases/latest)
+
 ---
 
 ## 🌟 Key Features

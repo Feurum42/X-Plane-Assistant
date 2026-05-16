@@ -45,7 +45,8 @@
     "publish": {
       "provider": "github",
       "owner": "Feurum42",
-      "repo": "X-Plane-Assistant"
+      "repo": "X-Plane-Assistant",
+      "releaseType": "release"
     }
   },
   "dependencies": {
