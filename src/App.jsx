@@ -2720,7 +2720,7 @@ function InstalledModCard({ instMod, catalog, xplanePath, onToggle, onDelete, in
   if (!instMod) return null;
   const catalogMod = (catalog || []).find(m => m && m.id === instMod.id) || {};
   const mod = { ...catalogMod, ...instMod };
-  const hasFlyWithLua = installedMods && installedMods.some(m => m.id === 'flywithlua');
+  const hasFlyWithLua = Array.isArray(installedMods) && installedMods.some(m => m && m.id === 'flywithlua');
   
   const [isToggling, setIsToggling] = useState(false);
   
@@ -2772,7 +2772,7 @@ function InstalledModCard({ instMod, catalog, xplanePath, onToggle, onDelete, in
             <span style={{ fontWeight: '700', fontSize: '1.2rem' }}>
               {mod.name || mod.id}
             </span>
-            {mod.productUrl && (
+            {mod.productUrl && typeof mod.productUrl === 'string' && (
               <a 
                 href={mod.productUrl} 
                 target="_blank" 
@@ -2787,7 +2787,7 @@ function InstalledModCard({ instMod, catalog, xplanePath, onToggle, onDelete, in
         </div>
       </div>
 
-      {mod.author && (
+      {mod.author && typeof mod.author === 'string' && (
         <div className="mod-author" style={{ marginBottom: '10px', fontSize: '0.9rem' }}>
           by <a href={mod.authorUrl || '#'} target="_blank" rel="noreferrer" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>{mod.author}</a>
         </div>
@@ -2809,9 +2809,9 @@ function InstalledModCard({ instMod, catalog, xplanePath, onToggle, onDelete, in
         paddingTop: '12px',
         marginBottom: '15px'
       }}>
-        <span className="mod-badge" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-primary)' }}>{mod.type?.toUpperCase()}</span>
+        <span className="mod-badge" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-primary)' }}>{(mod.type || 'unknown').toUpperCase()}</span>
         
-        {mod.source && (
+        {typeof mod.source === 'string' && (
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             🌐 {mod.source.replace('X-Plane.', '')}
           </span>
@@ -2829,7 +2829,7 @@ function InstalledModCard({ instMod, catalog, xplanePath, onToggle, onDelete, in
           </span>
         )}
 
-        {mod.versions && (
+        {Array.isArray(mod.versions) && (
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--success)' }}>
             ✈️ XP {mod.versions.join('/')}
           </span>
