@@ -1,0 +1,44 @@
+{
+  "name": "xplane-assistant",
+  "private": true,
+  "version": "0.0.0",
+  "main": "dist-electron/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "7zip-bin": "^5.2.0",
+    "cheerio": "^1.2.0",
+    "chokidar": "^5.0.0",
+    "leaflet": "^1.9.4",
+    "node-7z": "^3.0.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-leaflet": "^5.0.0",
+    "screenshot-desktop": "^1.15.4",
+    "uuid": "^14.0.0",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "axios": "^1.16.0",
+    "electron": "^42.0.1",
+    "esbuild": "^0.28.0",
+    "eslint": "^10.2.1",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "fs-extra": "^11.3.5",
+    "globals": "^17.5.0",
+    "unzipper": "^0.12.3",
+    "vite": "^8.0.10",
+    "vite-plugin-electron": "^0.29.1",
+    "vite-plugin-electron-renderer": "^0.14.7"
+  }
+}
