@@ -511,9 +511,13 @@ function App() {
     if (window.electronAPI) {
       window.electronAPI.getAppVersion().then(v => setAppVersion(v));
 
-      window.electronAPI.onUpdateAvailable((info) => {
+      window.electronAPI.onScreenshotCaptured((meta) => {
         setScreenshots(prev => [...prev, meta]);
         new Notification("Screenshot Captured!", { body: `Saved at ${meta.lat.toFixed(2)}, ${meta.lng.toFixed(2)}` });
+      });
+
+      window.electronAPI.onUpdateAvailable((info) => {
+        setUpdateInfo(info);
       });
 
       window.electronAPI.onScreenshotsUpdated(() => {
@@ -1501,6 +1505,10 @@ function App() {
                 <div className="spinner" style={{ marginBottom: '15px' }}>⏳</div>
                 <div>Scanning your X-Plane directory for add-ons...</div>
                 <div style={{ fontSize: '0.8rem', marginTop: '5px', opacity: 0.6 }}>This may take a moment during the first run.</div>
+              </div>
+            ) : !Array.isArray(installedMods) ? (
+              <div style={{ padding: '40px', color: 'var(--danger)', textAlign: 'center' }}>
+                Error loading mods. Please check your X-Plane directory path.
               </div>
             ) : installedMods.length === 0 ? (
               <div style={{ 
