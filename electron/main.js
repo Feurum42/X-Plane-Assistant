@@ -10,6 +10,11 @@ import { extractMod, enableMod, disableMod } from './services/installService.js'
 import screenshotService from './services/screenshotService.js';
 import { getUnifiedFeed, fetchSingleProductPrice } from './aggregator.js';
 import { sendDiscordNotification, sendTelegramNotification, sendEmailNotification } from './services/notificationService.js';
+import { autoUpdater } from 'electron-updater';
+
+// Configure Auto Updater
+autoUpdater.autoDownload = false; // We'll let the user decide
+autoUpdater.logger = console;
 
 let watcher = null;
 
@@ -117,13 +122,42 @@ function createWindow() {
 
   win.maximize();
 
+  // Auto Updater Events
+  autoUpdater.on('update-available', (info) => {
+    win.webContents.send('update-available', info);
+  });
+
+  autoUpdater.on('download-progress', (progressObj) => {
+    win.webContents.send('update-download-progress', progressObj.percent);
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    win.webContents.send('update-downloaded');
+  });
+
   if (process.env.VITE_DEV_SERVER_URL) {
     win.loadURL(process.env.VITE_DEV_SERVER_URL);
     // win.webContents.openDevTools();
   } else {
     win.loadFile(path.join(process.env.DIST, 'index.html'));
   }
+
+  // Check for updates after window is ready
+  win.webContents.on('did-finish-load', () => {
+    if (!process.env.VITE_DEV_SERVER_URL) {
+      autoUpdater.checkForUpdatesAndNotify().catch(err => console.error('Update check failed:', err));
+    }
+  });
 }
+
+// IPC for manual update actions
+ipcMain.handle('download-update', () => {
+  return autoUpdater.downloadUpdate();
+});
+
+ipcMain.handle('install-update', () => {
+  autoUpdater.quitAndInstall();
+});
 
 ipcMain.handle('get-wishlist', async (event, xplanePath) => {
   try {

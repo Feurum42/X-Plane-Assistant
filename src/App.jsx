@@ -129,11 +129,26 @@ function App() {
   const [activeSettingsTab, setActiveSettingsTab] = useState('directories');
 
   const [downloads, setDownloads] = useState({});
+  const [updateInfo, setUpdateInfo] = useState(null);
+  const [updateProgress, setUpdateProgress] = useState(0);
+  const [updateDownloaded, setUpdateDownloaded] = useState(false);
 
   useEffect(() => {
-    if (window.electronAPI && window.electronAPI.onDownloadProgress) {
+    if (window.electronAPI) {
       window.electronAPI.onDownloadProgress(({ modId, progress, stage }) => {
         setDownloads(prev => ({ ...prev, [modId]: { progress, stage } }));
+      });
+
+      window.electronAPI.onUpdateAvailable((info) => {
+        setUpdateInfo(info);
+      });
+
+      window.electronAPI.onUpdateDownloadProgress((progress) => {
+        setUpdateProgress(progress);
+      });
+
+      window.electronAPI.onUpdateDownloaded(() => {
+        setUpdateDownloaded(true);
       });
     }
   }, []);
@@ -2759,6 +2774,51 @@ function InstalledModCard({ instMod, catalog, xplanePath, onToggle, onDelete, in
           🗑️
         </button>
       </div>
+      {updateInfo && (
+        <div className="animate-in" style={{
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          width: '320px',
+          background: 'var(--panel-bg)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid var(--accent)',
+          borderRadius: '12px',
+          padding: '20px',
+          boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '15px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '1.5rem' }}>🚀</span>
+            <div>
+              <div style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>New Version Available!</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Version {updateInfo.version} is ready.</div>
+            </div>
+          </div>
+
+          {!updateDownloaded ? (
+            <>
+              {updateProgress > 0 ? (
+                <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
+                  <div style={{ width: `${updateProgress}%`, height: '100%', background: 'var(--accent)', transition: 'width 0.3s' }} />
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button className="btn btn-secondary" style={{ flex: 1, fontSize: '0.8rem' }} onClick={() => setUpdateInfo(null)}>Later</button>
+                  <button className="btn btn-primary" style={{ flex: 1, fontSize: '0.8rem' }} onClick={() => window.electronAPI.downloadUpdate()}>Update Now</button>
+                </div>
+              )}
+            </>
+          ) : (
+            <button className="btn btn-primary" style={{ width: '100%', background: 'var(--success)' }} onClick={() => window.electronAPI.installUpdate()}>
+              Restart & Install
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
