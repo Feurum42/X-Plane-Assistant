@@ -607,6 +607,10 @@ ipcMain.handle('get-changelog', async () => {
   }
 });
 
+ipcMain.handle('get-app-version', () => {
+  return app.getVersion();
+});
+
 ipcMain.handle('get-unified-feed', async () => {
   try {
     return await getUnifiedFeed();

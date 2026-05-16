@@ -30,6 +30,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   downloadUpdate: () => ipcRenderer.invoke("download-update"),
   installUpdate: () => ipcRenderer.invoke("install-update"),
   getChangelog: () => ipcRenderer.invoke('get-changelog'),
+  getAppVersion: () => ipcRenderer.invoke('get-app-version'),
   getWishlist: (path) => ipcRenderer.invoke('get-wishlist', path),
   saveWishlist: (args) => ipcRenderer.invoke('save-wishlist', args),
   startWishlistMonitor: (path) => ipcRenderer.invoke('start-wishlist-monitor', path),

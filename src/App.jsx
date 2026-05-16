@@ -135,6 +135,7 @@ function App() {
   const [isScanning, setIsScanning] = useState(false);
   const [showChangelog, setShowChangelog] = useState(false);
   const [changelogContent, setChangelogContent] = useState('');
+  const [appVersion, setAppVersion] = useState('');
 
   useEffect(() => {
     if (window.electronAPI) {
@@ -508,7 +509,9 @@ function App() {
     }
 
     if (window.electronAPI) {
-      window.electronAPI.onScreenshotCaptured((meta) => {
+      window.electronAPI.getAppVersion().then(v => setAppVersion(v));
+
+      window.electronAPI.onUpdateAvailable((info) => {
         setScreenshots(prev => [...prev, meta]);
         new Notification("Screenshot Captured!", { body: `Saved at ${meta.lat.toFixed(2)}, ${meta.lng.toFixed(2)}` });
       });
@@ -960,7 +963,7 @@ function App() {
             gap: '4px',
             alignItems: 'center'
           }}>
-            <span>VERSION 1.1.0</span>
+            <span>VERSION {appVersion || '...'}</span>
             <span 
               onClick={async () => {
                 if (window.electronAPI) {
