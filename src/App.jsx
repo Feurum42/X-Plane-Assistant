@@ -925,6 +925,16 @@ function App() {
           <div className="nav-item" onClick={!isLoggedInTo ? handleLoginTo : undefined} style={{ cursor: isLoggedInTo ? 'default' : 'pointer' }}>
             {isLoggedInTo ? '✅ Authenticated (X-Plane.to)' : '🔐 Login to X-Plane.to'}
           </div>
+          <div style={{ 
+            fontSize: '0.65rem', 
+            color: 'var(--text-secondary)', 
+            textAlign: 'center', 
+            marginTop: '10px',
+            opacity: 0.5,
+            letterSpacing: '1px'
+          }}>
+            VERSION 1.0.3
+          </div>
         </div>
       </div>
 

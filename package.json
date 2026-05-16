@@ -1,7 +1,7 @@
 {
   "name": "xplane-assistant",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.3",
   "main": "dist-electron/main.js",
   "type": "module",
   "scripts": {
@@ -28,13 +28,15 @@
         "nsis",
         "portable"
       ],
-      "icon": "public/icon.png"
+      "icon": "public/icon.png",
+      "artifactName": "${productName}-Setup-${version}.${ext}"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "shortcutName": "X-Plane Assistant"
+      "shortcutName": "X-Plane Assistant",
+      "artifactName": "${productName}-Setup-${version}.${ext}"
     },
     "publish": {
       "provider": "github",
