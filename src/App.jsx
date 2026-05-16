@@ -905,7 +905,7 @@ function App() {
                 onClick={() => setActiveTab('vault')}
                 style={{ fontSize: '0.85rem', padding: '8px 12px' }}
               >
-                💾 Installed Addons ({installedMods.filter(m => m.enabled).length}/{installedMods.length})
+                💾 Installed Addons ({Array.isArray(installedMods) ? installedMods.filter(m => m && m.enabled).length : 0}/{Array.isArray(installedMods) ? installedMods.length : 0})
               </div>
             </div>
           )}
@@ -1549,16 +1549,18 @@ function App() {
                   })
                   .map(instMod => {
                     if (!instMod || !instMod.id) return null;
+                    const fullCatalog = Array.isArray(catalog) ? (Array.isArray(customCatalog) ? [...customCatalog, ...catalog] : catalog) : [];
+                    const modProgress = downloads ? downloads[instMod.id] : null;
                     return (
                       <InstalledModCard 
                         key={instMod.id} 
                         instMod={instMod} 
-                        catalog={[...customCatalog, ...catalog]} 
+                        catalog={fullCatalog} 
                         xplanePath={xplanePath} 
                         onToggle={() => loadInstalledMods(xplanePath)} 
                         onDelete={() => handleDeleteMod(instMod)}
-                        installedMods={installedMods} 
-                        progress={downloads[instMod.id]}
+                        installedMods={Array.isArray(installedMods) ? installedMods : []} 
+                        progress={modProgress}
                       />
                     );
                   })}
