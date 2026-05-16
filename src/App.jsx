@@ -197,7 +197,7 @@ function App() {
   }, [xplanePath]);
 
   // Stable Grid Calculation to preserve column count during sidebar toggle
-  const gridCols = Math.max(1, Math.floor((window.innerWidth - 100) / 360));
+  const gridCols = Math.max(1, Math.floor((Math.max(window.innerWidth, 1200) - 100) / 360)) || 3;
   const stableGridStyle = {
     display: 'grid',
     gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
@@ -1536,24 +1536,32 @@ function App() {
               <div className="mod-grid" style={stableGridStyle}>
                 {installedMods
                   .filter(mod => {
+                    if (!mod) return false;
                     if (vaultFilter === 'all') return true;
-                    // Vault doesn't really have trending/popular in the same way, but we can match type
                     if (['trending', 'popular', 'recent'].includes(vaultFilter)) return true; 
-                    return mod.type.toLowerCase() === vaultFilter.toLowerCase();
+                    const mType = mod.type || 'unknown';
+                    return mType.toLowerCase() === vaultFilter.toLowerCase();
                   })
-                  .filter(mod => (mod.name || mod.id).toLowerCase().includes(vaultSearch.toLowerCase()))
-                  .map(instMod => (
-                    <InstalledModCard 
-                      key={instMod.id} 
-                      instMod={instMod} 
-                      catalog={[...customCatalog, ...catalog]} 
-                      xplanePath={xplanePath} 
-                      onToggle={() => loadInstalledMods(xplanePath)} 
-                      onDelete={() => handleDeleteMod(instMod)}
-                      installedMods={installedMods} 
-                      progress={downloads[instMod.id]}
-                    />
-                ))}
+                  .filter(mod => {
+                    if (!mod) return false;
+                    const searchStr = (mod.name || mod.id || '').toLowerCase();
+                    return searchStr.includes(vaultSearch.toLowerCase());
+                  })
+                  .map(instMod => {
+                    if (!instMod || !instMod.id) return null;
+                    return (
+                      <InstalledModCard 
+                        key={instMod.id} 
+                        instMod={instMod} 
+                        catalog={[...customCatalog, ...catalog]} 
+                        xplanePath={xplanePath} 
+                        onToggle={() => loadInstalledMods(xplanePath)} 
+                        onDelete={() => handleDeleteMod(instMod)}
+                        installedMods={installedMods} 
+                        progress={downloads[instMod.id]}
+                      />
+                    );
+                  })}
               </div>
             )}
           </div>
@@ -2707,7 +2715,8 @@ function ModCard({ mod, isLoggedInOrg, isLoggedInTo, xplanePath, onInstall, onDe
 }
 
 function InstalledModCard({ instMod, catalog, xplanePath, onToggle, onDelete, installedMods, progress }) {
-  const catalogMod = catalog.find(m => m.id === instMod.id) || {};
+  if (!instMod) return null;
+  const catalogMod = (catalog || []).find(m => m && m.id === instMod.id) || {};
   const mod = { ...catalogMod, ...instMod };
   const hasFlyWithLua = installedMods && installedMods.some(m => m.id === 'flywithlua');
   
