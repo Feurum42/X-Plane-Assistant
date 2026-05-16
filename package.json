@@ -22,7 +22,11 @@
       "dist/**/*",
       "dist-electron/**/*",
       "public/**/*",
-      "package.json"
+      "package.json",
+      "CHANGELOG.md"
+    ],
+    "extraResources": [
+      "CHANGELOG.md"
     ],
     "win": {
       "target": [

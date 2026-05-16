@@ -133,6 +133,8 @@ function App() {
   const [updateProgress, setUpdateProgress] = useState(0);
   const [updateDownloaded, setUpdateDownloaded] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
+  const [showChangelog, setShowChangelog] = useState(false);
+  const [changelogContent, setChangelogContent] = useState('');
 
   useEffect(() => {
     if (window.electronAPI) {
@@ -952,9 +954,30 @@ function App() {
             textAlign: 'center', 
             marginTop: '10px',
             opacity: 0.5,
-            letterSpacing: '1px'
+            letterSpacing: '1px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '4px',
+            alignItems: 'center'
           }}>
-            VERSION 1.1.0
+            <span>VERSION 1.1.0</span>
+            <span 
+              onClick={async () => {
+                if (window.electronAPI) {
+                  const content = await window.electronAPI.getChangelog();
+                  setChangelogContent(content);
+                  setShowChangelog(true);
+                }
+              }}
+              style={{ 
+                cursor: 'pointer', 
+                textDecoration: 'underline', 
+                color: 'var(--accent)',
+                opacity: 0.8
+              }}
+            >
+              What's new?
+            </span>
           </div>
         </div>
       </div>
@@ -2846,6 +2869,67 @@ function InstalledModCard({ instMod, catalog, xplanePath, onToggle, onDelete, in
               Restart & Install
             </button>
           )}
+        </div>
+      )}
+      {showChangelog && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.8)',
+          backdropFilter: 'blur(10px)',
+          zIndex: 10000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px'
+        }}>
+          <div className="glass-panel animate-in" style={{
+            width: '100%',
+            maxWidth: '600px',
+            maxHeight: '80vh',
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '30px',
+            position: 'relative'
+          }}>
+            <button 
+              onClick={() => setShowChangelog(false)}
+              style={{
+                position: 'absolute',
+                top: '20px',
+                right: '20px',
+                background: 'none',
+                border: 'none',
+                color: 'var(--text-secondary)',
+                fontSize: '1.5rem',
+                cursor: 'pointer'
+              }}
+            >✕</button>
+            
+            <h2 style={{ margin: '0 0 20px 0', display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <span>📜</span> Release History
+            </h2>
+            
+            <div style={{ 
+              flex: 1, 
+              overflowY: 'auto', 
+              paddingRight: '10px',
+              fontSize: '0.95rem',
+              lineHeight: '1.6',
+              whiteSpace: 'pre-wrap',
+              color: 'var(--text-secondary)'
+            }}>
+              {changelogContent}
+            </div>
+
+            <button 
+              className="btn btn-primary" 
+              style={{ marginTop: '25px', alignSelf: 'center', minWidth: '150px' }}
+              onClick={() => setShowChangelog(false)}
+            >
+              Close
+            </button>
+          </div>
         </div>
       )}
     </div>

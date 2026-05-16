@@ -592,6 +592,21 @@ ipcMain.handle('toggle-mod', async (event, { vaultPath, xplanePath, modId, modTy
   }
 });
 
+ipcMain.handle('get-changelog', async () => {
+  try {
+    const changelogPath = app.isPackaged 
+      ? path.join(process.resourcesPath, 'CHANGELOG.md')
+      : path.join(__dirname, '../CHANGELOG.md');
+    
+    if (await fs.pathExists(changelogPath)) {
+      return await fs.readFile(changelogPath, 'utf8');
+    }
+    return "Changelog not found.";
+  } catch (err) {
+    return "Error loading changelog: " + err.message;
+  }
+});
+
 ipcMain.handle('get-unified-feed', async () => {
   try {
     return await getUnifiedFeed();
