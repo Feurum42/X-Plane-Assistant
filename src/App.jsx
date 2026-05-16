@@ -132,6 +132,7 @@ function App() {
   const [updateInfo, setUpdateInfo] = useState(null);
   const [updateProgress, setUpdateProgress] = useState(0);
   const [updateDownloaded, setUpdateDownloaded] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
 
   useEffect(() => {
     if (window.electronAPI) {
@@ -482,8 +483,13 @@ function App() {
 
   const loadInstalledMods = async (path) => {
     if (window.electronAPI) {
-      const mods = await window.electronAPI.getMods(path);
-      setInstalledMods(mods);
+      setIsScanning(true);
+      try {
+        const mods = await window.electronAPI.getMods(path);
+        setInstalledMods(mods);
+      } finally {
+        setIsScanning(false);
+      }
     }
   };
 
@@ -1454,8 +1460,31 @@ function App() {
                 }
               }}>Disable All</button>
             </div>
-            {installedMods.length === 0 ? (
-              <div style={{ color: 'var(--text-secondary)' }}>
+            {isScanning ? (
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                padding: '40px',
+                background: 'rgba(255,255,255,0.03)',
+                borderRadius: '12px',
+                border: '1px solid var(--panel-border)',
+                color: 'var(--text-secondary)'
+              }}>
+                <div className="spinner" style={{ marginBottom: '15px' }}>⏳</div>
+                <div>Scanning your X-Plane directory for add-ons...</div>
+                <div style={{ fontSize: '0.8rem', marginTop: '5px', opacity: 0.6 }}>This may take a moment during the first run.</div>
+              </div>
+            ) : installedMods.length === 0 ? (
+              <div style={{ 
+                padding: '40px',
+                textAlign: 'center',
+                color: 'var(--text-secondary)',
+                background: 'rgba(255,255,255,0.03)',
+                borderRadius: '12px',
+                border: '1px solid var(--panel-border)'
+              }}>
                 You do not have any mods installed. Download mods from the catalog to see them here.
               </div>
             ) : (

@@ -328,7 +328,29 @@ ipcMain.handle('select-directory', async (event) => {
 // Example handler to list mods in ModVault vs installed
 ipcMain.handle('get-mods', async (event, xplanePath) => {
   const vaultPath = path.join(xplanePath, 'ModVault');
+  const cachePath = path.join(app.getPath('userData'), 'mod-cache.json');
   await fs.ensureDir(vaultPath);
+
+  let sizeCache = {};
+  try {
+    if (await fs.pathExists(cachePath)) {
+      sizeCache = await fs.readJson(cachePath);
+    }
+  } catch (e) {}
+
+  const getSmartSize = async (dirPath) => {
+    try {
+      const stats = await fs.lstat(dirPath);
+      const mtime = stats.mtimeMs;
+      if (sizeCache[dirPath] && sizeCache[dirPath].mtime === mtime) {
+        return sizeCache[dirPath].size;
+      }
+      const sizeBytes = stats.isDirectory() ? await getDirSize(dirPath) : stats.size;
+      const formattedSize = formatSize(sizeBytes);
+      sizeCache[dirPath] = { mtime, size: formattedSize };
+      return formattedSize;
+    } catch (e) { return 'Unknown'; }
+  };
 
   const mods = [];
   const managedIds = new Set();
@@ -398,8 +420,7 @@ ipcMain.handle('get-mods', async (event, xplanePath) => {
         if (meta.enabled) break;
       }
 
-      const actualSizeBytes = await getDirSize(modPath);
-      const actualSize = formatSize(actualSizeBytes);
+      const actualSize = await getSmartSize(modPath);
 
       mods.push({
         id: meta.id,
@@ -451,13 +472,7 @@ ipcMain.handle('get-mods', async (event, xplanePath) => {
 
         let actualSize = 'Unknown';
         try {
-          const stats = await fs.lstat(itemPath);
-          if (stats.isDirectory()) {
-            const sizeBytes = await getDirSize(itemPath);
-            actualSize = formatSize(sizeBytes);
-          } else {
-            actualSize = formatSize(stats.size);
-          }
+          actualSize = await getSmartSize(itemPath);
         } catch (e) {}
 
         // Special handling for Zibo 737
@@ -529,6 +544,11 @@ ipcMain.handle('get-mods', async (event, xplanePath) => {
     }
     uniqueMods.push(mod);
   }
+
+  // Save cache for next time
+  try {
+    await fs.writeJson(cachePath, sizeCache);
+  } catch (e) {}
 
   return uniqueMods;
 });
