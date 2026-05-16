@@ -13,7 +13,7 @@ export default defineConfig({
         vite: {
           build: {
             rollupOptions: {
-              external: ['electron', 'path', 'fs', 'https', 'child_process', 'url', 'fs-extra', '@aws-sdk/client-s3', '7zip-bin', 'node-7z']
+              external: ['electron', 'path', 'fs', 'https', 'child_process', 'url', 'fs-extra', '@aws-sdk/client-s3', '7zip-bin', 'node-7z', 'axios', 'cheerio', 'xml2js']
             }
           }
         }
