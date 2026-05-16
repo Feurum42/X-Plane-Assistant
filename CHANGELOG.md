@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.3] - 2026-05-16
+### Fixed
+- **Single Source of Truth**: Refactored the versioning system to read directly from `package.json`, ensuring consistency across the entire app.
+
+## [1.1.2] - 2026-05-16
+### Added
+- **Integrated Changelog**: Added a "What's new?" viewer directly in the application sidebar to track release history.
+- **Improved Distribution**: Updated build configuration to include project metadata in the final `.exe`.
+
 ## [1.1.1] - 2026-05-16
 ### Added
 - **Smart Caching Engine**: Dramatically improved startup speed by caching directory sizes based on modification time.
