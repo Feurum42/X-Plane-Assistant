@@ -1,7 +1,7 @@
 {
   "name": "xplane-assistant",
   "private": true,
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Smart Mod Manager and Assistant for X-Plane 12",
   "author": "Feurum42",
   "main": "dist-electron/main.js",
