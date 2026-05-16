@@ -28,7 +28,7 @@
         "nsis",
         "portable"
       ],
-      "icon": "public/favicon.svg"
+      "icon": "public/icon.png"
     },
     "nsis": {
       "oneClick": false,

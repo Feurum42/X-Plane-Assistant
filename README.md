@@ -42,13 +42,15 @@ Make sure you have the following installed on your system:
    npm run dev
    ```
 
-### Building for Production
+### Building for Production (Standalone EXE)
 
-To create a standalone executable for your OS:
+To create a professional installer (.exe) for Windows:
 ```bash
 npm run build
 ```
-The output will be located in the `dist-electron` folder.
+Once completed, check the `dist-electron` folder. You will find:
+- **X-Plane Assistant Setup.exe**: A full installer for your system.
+- **X-Plane Assistant Portable.exe**: A version that runs without installation.
 
 ---
 
