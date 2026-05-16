@@ -509,7 +509,7 @@ function App() {
 
   useEffect(() => {
     // Load catalog
-    fetch('/catalog.json')
+    fetch('./catalog.json')
       .then(res => res.json())
       .then(data => setCatalog(data))
       .catch(err => console.error("Failed to load catalog:", err));
